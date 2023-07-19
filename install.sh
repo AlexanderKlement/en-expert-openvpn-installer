@@ -28,6 +28,10 @@ sed -i "s|DAEMON=.*|DAEMON=$DAEMON|" /etc/init.d/check_openvpn
 sed -i "s|PID_DIR=.*|PID_DIR=$PID_DIR|" /etc/init.d/check_openvpn
 
 # Add the script to startup
-update-rc.d check_openvpn defaults
+if [ "$DEVICE_TYPE" = "resiot" ]; then
+    update-rc.d check_openvpn defaults
+elif [ "$DEVICE_TYPE" = "dragino" ]; then
+    ln -s /etc/init.d/check_openvpn /etc/rc.d/
+fi
 
 echo "Installation complete."
