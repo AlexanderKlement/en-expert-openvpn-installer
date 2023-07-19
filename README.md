@@ -1,4 +1,5 @@
-# OpenVPN Auto Reconnect for Yocto devices
+# OpenVPN Auto Reconnect for Yocto/OpenWRT devices
+### Supported Devices: ResIOT x2, Dragino LPS8
 
 This project provides a script that will help to ensure OpenVPN automatically reconnects on Yocto devices when the
 network connectivity is lost or the OpenVPN process is not running.
