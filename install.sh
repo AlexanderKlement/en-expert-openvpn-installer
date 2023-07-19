@@ -23,7 +23,6 @@ if [ "$DEVICE_TYPE" = "dragino" ]; then
 
 
 elif [ "$DEVICE_TYPE" = "resiot" ]; then
-    curl -s update.resiot.io/extra/openvpn/resiot_gw_x2_x4_x7_update_openvpn_to_2412.sh | bash
     # Copy the check_openvpn_resiot_service script
     cp check_openvpn_resiot_service /etc/init.d/
 
@@ -32,6 +31,10 @@ elif [ "$DEVICE_TYPE" = "resiot" ]; then
 
     # Add the script to startup
     update-rc.d check_openvpn defaults
+
+elif [ "$DEVICE_TYPE" = "update_resiot" ]; then
+
+    curl -s update.resiot.io/extra/openvpn/resiot_gw_x2_x4_x7_update_openvpn_to_2412.sh | bash
 
 else
     echo "Invalid device type. Please enter either 'dragino' or 'resiot'."
