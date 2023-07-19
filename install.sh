@@ -8,10 +8,10 @@ read DEVICE_TYPE
 if [ "$DEVICE_TYPE" = "dragino" ]; then
     DAEMON="/usr/sbin/openvpn"
     PID_DIR="/tmp/run"
-    curl -s update.resiot.io/extra/openvpn/resiot_gw_x2_x4_x7_update_openvpn_to_2412.sh | bash
 elif [ "$DEVICE_TYPE" = "resiot" ]; then
     DAEMON="/usr/local/sbin/openvpn"
     PID_DIR="/run"
+    curl -s update.resiot.io/extra/openvpn/resiot_gw_x2_x4_x7_update_openvpn_to_2412.sh | bash
 else
     echo "Invalid device type. Please enter either 'dragino' or 'resiot'."
     exit 1
