@@ -13,11 +13,11 @@ if [ "$DEVICE_TYPE" = "dragino" ]; then
     cp check_openvpn_dragino.sh $SCRIPT_DIR
 
     # Check if the cron job already exists
-    if crontab -l | grep -q "$SCRIPT_DIR/check_openvpn.sh"; then
+    if crontab -l | grep -q "$SCRIPT_DIR/check_openvpn_dragino.sh"; then
       echo "Cron job already exists. Skipping..."
     else
       # Add a cron job to run the script every minute
-      (crontab -l 2>/dev/null; echo "* * * * * $SCRIPT_DIR/check_openvpn.sh") | crontab -
+      (crontab -l 2>/dev/null; echo "* * * * * $SCRIPT_DIR/check_openvpn_dragino.sh") | crontab -
       echo "Cron job added."
     fi
 
@@ -30,7 +30,7 @@ elif [ "$DEVICE_TYPE" = "resiot" ]; then
     chmod +x /etc/init.d/check_openvpn_resiot_service
 
     # Add the script to startup
-    update-rc.d check_openvpn defaults
+    update-rc.d check_openvpn_resiot_service defaults
 
 elif [ "$DEVICE_TYPE" = "update_resiot" ]; then
 
@@ -38,6 +38,7 @@ elif [ "$DEVICE_TYPE" = "update_resiot" ]; then
 
 else
     echo "Invalid device type. Please enter either 'dragino' or 'resiot'."
+    echo "Hidden option can be 'update_resiot'"
     exit 1
 fi
 
