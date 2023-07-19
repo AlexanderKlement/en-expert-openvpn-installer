@@ -5,12 +5,14 @@ network connectivity is lost or the OpenVPN process is not running.
 
 ## Prerequisites
 
-- Yocto device with OpenVPN installed and configured
+- Yocto/OpenWRT device with OpenVPN installed and configured
 - Internet access
 - openvpn.conf file in /etc/openvpn
 - For Dragino devices: Install latest firmware that includes openvpn (tested with:
   lgw-openvpn--build-v5.4.1676269685-20230213-1429)
   from [here](https://www.dragino.com/downloads/index.php?dir=LoRa_Gateway/LPS8/Firmware/Release/)
+- For ResIOT devices: Make sure to have the latest official OpenVPN package installed. The Installer does provide
+  an Install-Script via ````update_resiot````
 
 ## Installation
 
@@ -44,9 +46,12 @@ During the installation process, the script will ask for the type of the device 
 
 ## How it works
 
-After installation, the script will begin to run in the background. It will periodically check the status of the OpenVPN
-process, as well as the network connectivity by sending a ping to a specified IP address.
+After installation, the script will begin to run in the background (ResIOT: Busy Waiting | Dragino: CronJob).
+It will periodically check the status of the OpenVPN process (only ResIOT atm), as well as the network connectivity by
+sending a ping to
+a specified IP address.
 
 - If the OpenVPN process is not running, it will attempt to restart the service.
 - If the ping to the specified IP address fails, it will attempt to refresh the VPN connection.
-- If the maximum number of fails (default: 10) is reached, the system will reboot.
+- If the maximum number of fails (default: 5 or after 5 minutes) is reached, the system will reboot. This is a fallback
+  mechanism only to prevent loosing a device entirely and missing too much data.

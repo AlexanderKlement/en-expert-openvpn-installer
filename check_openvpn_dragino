@@ -11,7 +11,7 @@ else
 fi
 
 # Check if the last successful ping was more than 10 minutes ago
-if [ $(($(date +%s) - $(date +%s -r $LAST_SUCCESS_FILE))) -ge 600 ]; then
+if [ $(($(date +%s) - $(date +%s -r $LAST_SUCCESS_FILE))) -ge 300 ]; then
     echo "Network connectivity couldn't be restored. Rebooting the system..."
     reboot
 fi
