@@ -1,0 +1,60 @@
+#!/bin/sh
+DAEMON=/usr/sbin/openvpn
+CONFIG_DIR=/etc/openvpn
+PID_DIR=/var/run
+CHECK_INTERVAL=30  # check every 30 seconds
+CHECK_IP=8.8.8.8  # the IP address to check for network connectivity
+MAX_FAILS=10  # maximum number of failed checks before rebooting
+
+start_vpn() {
+    echo "Starting OpenVPN for $CONFIG_NAME..."
+    $DAEMON --daemon --writepid $PID_DIR/openvpn.$CONFIG_NAME.pid --config $CONFIG_DIR/$CONFIG_NAME.conf --cd $CONFIG_DIR
+}
+
+stop_vpn() {
+    echo "Stopping OpenVPN for $CONFIG_NAME..."
+    kill $(cat $PIDFILE) && rm $PIDFILE
+}
+
+refresh_vpn() {
+    echo "Refreshing OpenVPN connection for $CONFIG_NAME..."
+    kill -USR1 $(cat $PIDFILE)
+}
+
+fails=0
+while true; do
+    for CONFIG_FILE in $CONFIG_DIR/*.conf; do
+        CONFIG_NAME=$(basename $CONFIG_FILE .conf)
+        PIDFILE="$PID_DIR/openvpn.$CONFIG_NAME.pid"
+
+        # Check if the OpenVPN process is running
+        if ! kill -0 $(cat $PIDFILE) >/dev/null 2>&1; then
+            echo "OpenVPN process for $CONFIG_NAME is not running."
+            # If the process is not running, but the PID file exists, stop the service to clean up
+            if [ -f "$PIDFILE" ]; then
+                stop_vpn
+            fi
+            # Then start the service
+            start_vpn
+        fi
+
+        # Check if we have network connectivity
+        if ! ping -c 1 $CHECK_IP >/dev/null 2>&1; then
+            echo "Unable to reach $CHECK_IP. Refreshing OpenVPN service for $CONFIG_NAME."
+            # If we don't have connectivity, refresh the VPN connection
+            refresh_vpn
+            fails=$((fails+1))
+        else
+            fails=0
+        fi
+
+        # If we've reached the maximum number of fails, reboot the system
+        if [ $fails -ge $MAX_FAILS ]; then
+            echo "Network connectivity couldn't be restored after $MAX_FAILS attempts. Rebooting the system..."
+            reboot
+        fi
+    done
+
+    # Wait for the check interval before the next round of checks
+    sleep $CHECK_INTERVAL
+done &
