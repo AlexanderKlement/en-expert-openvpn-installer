@@ -10,14 +10,14 @@ if [ "$DEVICE_TYPE" = "dragino" ]; then
     # Make sure the script directory exists
     mkdir -p $SCRIPT_DIR
     # Copy the script to the script directory
-    cp check_openvpn_dragino.sh $SCRIPT_DIR
+    cp check_openvpn_dragino $SCRIPT_DIR
 
     # Check if the cron job already exists
-    if crontab -l | grep -q "$SCRIPT_DIR/check_openvpn_dragino.sh"; then
+    if crontab -l | grep -q "$SCRIPT_DIR/check_openvpn_dragino"; then
       echo "Cron job already exists. Skipping..."
     else
       # Add a cron job to run the script every minute
-      (crontab -l 2>/dev/null; echo "* * * * * $SCRIPT_DIR/check_openvpn_dragino.sh") | crontab -
+      (crontab -l 2>/dev/null; echo "* * * * * $SCRIPT_DIR/check_openvpn_dragino") | crontab -
       echo "Cron job added."
     fi
 
