@@ -28,10 +28,10 @@ curl -LJO https://github.com/AlexanderKlement/en-expert-openvpn-installer/archiv
 2. Extract the tar file:
 
 ```bash
-tar -xvf release.tar.gz
+tar -xvzf en-expert-openvpn-installer-1.0.0
 ```
 
-3. Make the installer script executable:
+3. Enter the directory and make the installer script executable:
 
 ```bash
 chmod +x install.sh
