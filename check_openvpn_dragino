@@ -1,0 +1,17 @@
+#!/bin/sh
+CHECK_IP=8.8.8.8  # the IP address to check for network connectivity
+LAST_SUCCESS_FILE="/tmp/last_successful_ping"
+
+# Check if we have network connectivity
+if ping -c 1 $CHECK_IP >/dev/null 2>&1; then
+    # If we have connectivity, update the timestamp of the last successful ping
+    touch $LAST_SUCCESS_FILE
+else
+    echo "Unable to reach $CHECK_IP."
+fi
+
+# Check if the last successful ping was more than 10 minutes ago
+if [ $(($(date +%s) - $(date +%s -r $LAST_SUCCESS_FILE))) -ge 600 ]; then
+    echo "Network connectivity couldn't be restored. Rebooting the system..."
+    reboot
+fi

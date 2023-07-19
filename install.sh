@@ -6,32 +6,36 @@ read DEVICE_TYPE
 
 # Define paths depending on device type
 if [ "$DEVICE_TYPE" = "dragino" ]; then
-    DAEMON="/usr/sbin/openvpn"
-    PID_DIR="/tmp/run"
+    SCRIPT_DIR="/etc/en-expert"
+    # Make sure the script directory exists
+    mkdir -p $SCRIPT_DIR
+    # Copy the script to the script directory
+    cp check_openvpn_dragino.sh $SCRIPT_DIR
+
+    # Check if the cron job already exists
+    if crontab -l | grep -q "$SCRIPT_DIR/check_openvpn.sh"; then
+      echo "Cron job already exists. Skipping..."
+    else
+      # Add a cron job to run the script every minute
+      (crontab -l 2>/dev/null; echo "* * * * * $SCRIPT_DIR/check_openvpn.sh") | crontab -
+      echo "Cron job added."
+    fi
+
+
 elif [ "$DEVICE_TYPE" = "resiot" ]; then
-    DAEMON="/usr/local/sbin/openvpn"
-    PID_DIR="/run"
     curl -s update.resiot.io/extra/openvpn/resiot_gw_x2_x4_x7_update_openvpn_to_2412.sh | bash
+    # Copy the check_openvpn_resiot_service script
+    cp check_openvpn_resiot_service /etc/init.d/
+
+    # Make the script executable
+    chmod +x /etc/init.d/check_openvpn_resiot_service
+
+    # Add the script to startup
+    update-rc.d check_openvpn defaults
+
 else
     echo "Invalid device type. Please enter either 'dragino' or 'resiot'."
     exit 1
-fi
-
-# Copy the check_openvpn script
-cp check_openvpn /etc/init.d/
-
-# Make the script executable
-chmod +x /etc/init.d/check_openvpn
-
-# Modify the script with the correct paths
-sed -i "s|DAEMON=.*|DAEMON=$DAEMON|" /etc/init.d/check_openvpn
-sed -i "s|PID_DIR=.*|PID_DIR=$PID_DIR|" /etc/init.d/check_openvpn
-
-# Add the script to startup
-if [ "$DEVICE_TYPE" = "resiot" ]; then
-    update-rc.d check_openvpn defaults
-elif [ "$DEVICE_TYPE" = "dragino" ]; then
-    ln -s /etc/init.d/check_openvpn /etc/rc.d/
 fi
 
 echo "Installation complete."
