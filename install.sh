@@ -12,6 +12,9 @@ if [ "$DEVICE_TYPE" = "dragino" ]; then
     # Copy the script to the script directory
     cp check_openvpn_dragino $SCRIPT_DIR
 
+    # Make the script executable
+    chmod +x $SCRIPT_DIR/check_openvpn_dragino
+
     # Check if the cron job already exists
     if crontab -l | grep -q "$SCRIPT_DIR/check_openvpn_dragino"; then
       echo "Cron job already exists. Skipping..."
