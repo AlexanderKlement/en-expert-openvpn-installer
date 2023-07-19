@@ -22,7 +22,7 @@ Follow the below steps to install the OpenVPN auto-reconnect script:
 1. Download the latest release (adjust version accordingly):
 
 ```bash
-curl -LJO https://github.com/AlexanderKlement/en-expert-openvpn-installer/archive/refs/tags/v0.0.2.tar.gz
+curl -LJO https://github.com/AlexanderKlement/en-expert-openvpn-installer/archive/refs/tags/v1.0.0.tar.gz
 ```
 
 2. Extract the tar file:
